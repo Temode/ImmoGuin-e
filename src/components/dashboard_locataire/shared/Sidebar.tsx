@@ -8,7 +8,6 @@ import {
   NotificationIcon,
   SearchIcon,
   VerifiedBadgeIcon,
-  DotsVerticalIcon,
 } from './SidebarIcons';
 import styles from './DashboardLocataireLayout.module.css';
 
@@ -96,7 +95,12 @@ const Sidebar = ({ user }: { user: SidebarUser }) => {
       </nav>
 
       <div className={styles.sidebarUser}>
-        <div className={styles.userCard}>
+        <NavLink
+          to="/dashboard-locataire/profil"
+          className={({ isActive }) =>
+            `${styles.userCard} ${isActive ? styles.userCardActive : ''}`
+          }
+        >
           <div className={styles.userAvatar}>{getInitials(user.name)}</div>
           <div className={styles.userInfo}>
             <p className={styles.userName}>{user.name}</p>
@@ -110,10 +114,7 @@ const Sidebar = ({ user }: { user: SidebarUser }) => {
               )}
             </p>
           </div>
-          <button className={styles.userMenuBtn}>
-            <DotsVerticalIcon />
-          </button>
-        </div>
+        </NavLink>
       </div>
     </aside>
   );

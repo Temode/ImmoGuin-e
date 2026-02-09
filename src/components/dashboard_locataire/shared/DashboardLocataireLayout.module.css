@@ -146,10 +146,16 @@
   border-radius: var(--radius-lg);
   transition: var(--transition-fast);
   cursor: pointer;
+  text-decoration: none;
+  color: inherit;
 }
 
 .userCard:hover {
   background: var(--color-neutral-50);
+}
+
+.userCardActive {
+  background: var(--color-primary-50);
 }
 
 .userAvatar {

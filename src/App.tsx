@@ -12,6 +12,7 @@ import Documents from './components/dashboard_locataire/Documents';
 import Messages from './components/dashboard_locataire/Messages';
 import Notifications from './components/dashboard_locataire/Notifications';
 import SearchProperty from './components/dashboard_locataire/SearchProperty';
+import ProfileSettings from './components/dashboard_locataire/ProfileSettings';
 export default function App() {
   return (
     <PropertyProvider>
@@ -30,6 +31,7 @@ export default function App() {
             <Route path="messages" element={<Messages />} />
             <Route path="notifications" element={<Notifications />} />
             <Route path="recherche" element={<SearchProperty />} />
+            <Route path="profil" element={<ProfileSettings />} />
           </Route>
 
           <Route path="*" element={<Navigate to="/" />} />
