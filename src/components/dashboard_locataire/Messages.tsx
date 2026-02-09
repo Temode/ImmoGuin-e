@@ -132,109 +132,6 @@ const FileIcon = ({ className }) => (
 );
 
 /* ==========================================
-   SIDEBAR COMPONENT
-========================================== */
-const Sidebar = ({ user }) => {
-  const navItems = {
-    principal: [
-      { icon: DashboardIcon, label: 'Tableau de bord', href: '#' },
-      { icon: HomeIcon, label: 'Mon logement', href: '#' },
-      { icon: PaymentIcon, label: 'Mes paiements', href: '#' },
-      { icon: DocumentIcon, label: 'Documents', href: '#' },
-    ],
-    communication: [
-      { icon: MessageIcon, label: 'Messages', href: '#', active: true, badge: 2, badgeGold: true },
-      { icon: NotificationIcon, label: 'Notifications', href: '#', badge: 3 },
-    ],
-    explorer: [
-      { icon: SearchIcon, label: 'Rechercher un bien', href: '#' },
-    ],
-  };
-
-  const getInitials = (name) => {
-    return name.split(' ').map((n) => n[0]).join('').toUpperCase();
-  };
-
-  return (
-    <aside className={styles.sidebar}>
-      <div className={styles.sidebarHeader}>
-        <a href="#" className={styles.logo}>
-          <div className={styles.logoIcon}>
-            <HomeIcon />
-          </div>
-          <span className={styles.logoText}>
-            Immo<span>GN</span>
-          </span>
-        </a>
-      </div>
-
-      <nav className={styles.sidebarNav}>
-        <div className={styles.navSection}>
-          <span className={styles.navSectionTitle}>Principal</span>
-          {navItems.principal.map((item, index) => (
-            <a
-              key={index}
-              href={item.href}
-              className={`${styles.navLink} ${item.active ? styles.active : ''}`}
-            >
-              <item.icon />
-              {item.label}
-            </a>
-          ))}
-        </div>
-
-        <div className={styles.navSection}>
-          <span className={styles.navSectionTitle}>Communication</span>
-          {navItems.communication.map((item, index) => (
-            <a
-              key={index}
-              href={item.href}
-              className={`${styles.navLink} ${item.active ? styles.active : ''}`}
-            >
-              <item.icon />
-              {item.label}
-              {item.badge && (
-                <span className={`${styles.navLinkBadge} ${item.badgeGold ? styles.gold : ''}`}>
-                  {item.badge}
-                </span>
-              )}
-            </a>
-          ))}
-        </div>
-
-        <div className={styles.navSection}>
-          <span className={styles.navSectionTitle}>Explorer</span>
-          {navItems.explorer.map((item, index) => (
-            <a key={index} href={item.href} className={styles.navLink}>
-              <item.icon />
-              {item.label}
-            </a>
-          ))}
-        </div>
-      </nav>
-
-      <div className={styles.sidebarUser}>
-        <div className={styles.userCard}>
-          <div className={styles.userAvatar}>{getInitials(user.name)}</div>
-          <div className={styles.userInfo}>
-            <p className={styles.userName}>{user.name}</p>
-            <p className={styles.userRole}>
-              {user.role}
-              {user.verified && (
-                <span className={styles.verifiedBadge}>
-                  <VerifiedBadgeIcon />
-                  Vérifié
-                </span>
-              )}
-            </p>
-          </div>
-        </div>
-      </div>
-    </aside>
-  );
-};
-
-/* ==========================================
    HEADER COMPONENT
 ========================================== */
 const Header = ({ date }) => {
@@ -658,39 +555,35 @@ const Messages = () => {
   const unreadCount = mockData.conversations.filter(c => c.unread).length;
 
   return (
-    <div className={styles.appLayout}>
-      <Sidebar user={mockData.user} />
-      
-      <div className={styles.mainWrapper}>
-        <Header date="Dim. 2 Février 2026" />
-        
-        <div className={styles.messagesContainer}>
-          <ConversationsPanel
-            conversations={mockData.conversations}
-            activeConversationId={activeConversationId}
-            onSelectConversation={setActiveConversationId}
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-            activeFilter={activeFilter}
-            onFilterChange={setActiveFilter}
-            unreadCount={unreadCount}
-          />
-          
-          <ChatPanel
-            activeContact={mockData.activeContact}
-            messages={mockData.messages}
-            onSendMessage={handleSendMessage}
-          />
-          
-          <QuickActionsPanel
-            contact={mockData.activeContact}
-            templates={mockData.templates}
-            sharedFiles={mockData.sharedFiles}
-            onTemplateClick={handleTemplateClick}
-          />
-        </div>
+    <>
+      <Header date="Dim. 2 Février 2026" />
+
+      <div className={styles.messagesContainer}>
+        <ConversationsPanel
+          conversations={mockData.conversations}
+          activeConversationId={activeConversationId}
+          onSelectConversation={setActiveConversationId}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          activeFilter={activeFilter}
+          onFilterChange={setActiveFilter}
+          unreadCount={unreadCount}
+        />
+
+        <ChatPanel
+          activeContact={mockData.activeContact}
+          messages={mockData.messages}
+          onSendMessage={handleSendMessage}
+        />
+
+        <QuickActionsPanel
+          contact={mockData.activeContact}
+          templates={mockData.templates}
+          sharedFiles={mockData.sharedFiles}
+          onTemplateClick={handleTemplateClick}
+        />
       </div>
-    </div>
+    </>
   );
 };
 

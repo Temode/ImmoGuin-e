@@ -181,102 +181,6 @@ const ExclamationIcon = ({ className }) => (
 );
 
 /* ==========================================
-   SIDEBAR COMPONENT
-========================================== */
-const Sidebar = ({ user }) => {
-  const navItems = {
-    principal: [
-      { icon: DashboardIcon, label: 'Tableau de bord', href: '#' },
-      { icon: HomeIcon, label: 'Mon logement', href: '#' },
-      { icon: PaymentIcon, label: 'Mes paiements', href: '#' },
-      { icon: DocumentIcon, label: 'Documents', href: '#', active: true },
-    ],
-    communication: [
-      { icon: MessageIcon, label: 'Messages', href: '#', badge: 2 },
-      { icon: NotificationIcon, label: 'Notifications', href: '#', badge: 3 },
-    ],
-    explorer: [
-      { icon: SearchIcon, label: 'Rechercher un bien', href: '#' },
-    ],
-  };
-
-  const getInitials = (name) => {
-    return name.split(' ').map((n) => n[0]).join('').toUpperCase();
-  };
-
-  return (
-    <aside className={styles.sidebar}>
-      <div className={styles.sidebarHeader}>
-        <a href="#" className={styles.logo}>
-          <div className={styles.logoIcon}>
-            <HomeIcon />
-          </div>
-          <span className={styles.logoText}>
-            Immo<span>GN</span>
-          </span>
-        </a>
-      </div>
-
-      <nav className={styles.sidebarNav}>
-        <div className={styles.navSection}>
-          <span className={styles.navSectionTitle}>Principal</span>
-          {navItems.principal.map((item, index) => (
-            <a
-              key={index}
-              href={item.href}
-              className={`${styles.navLink} ${item.active ? styles.active : ''}`}
-            >
-              <item.icon />
-              {item.label}
-              {item.badge && <span className={styles.navLinkBadge}>{item.badge}</span>}
-            </a>
-          ))}
-        </div>
-
-        <div className={styles.navSection}>
-          <span className={styles.navSectionTitle}>Communication</span>
-          {navItems.communication.map((item, index) => (
-            <a key={index} href={item.href} className={styles.navLink}>
-              <item.icon />
-              {item.label}
-              {item.badge && <span className={styles.navLinkBadge}>{item.badge}</span>}
-            </a>
-          ))}
-        </div>
-
-        <div className={styles.navSection}>
-          <span className={styles.navSectionTitle}>Explorer</span>
-          {navItems.explorer.map((item, index) => (
-            <a key={index} href={item.href} className={styles.navLink}>
-              <item.icon />
-              {item.label}
-            </a>
-          ))}
-        </div>
-      </nav>
-
-      <div className={styles.sidebarUser}>
-        <div className={styles.userCard}>
-          <div className={styles.userAvatar}>{getInitials(user.name)}</div>
-          <div className={styles.userInfo}>
-            <p className={styles.userName}>{user.name}</p>
-            <p className={styles.userRole}>
-              {user.role}
-              {user.verified && (
-                <span className={styles.verifiedBadge}>
-                  <VerifiedBadgeIcon />
-                  Vérifié
-                </span>
-              )}
-            </p>
-          </div>
-        </div>
-      </div>
-    </aside>
-  );
-};
-
-/* ==========================================
    HEADER COMPONENT
 ========================================== */
 const Header = ({ date, hasNotifications }) => {
@@ -651,72 +555,68 @@ const Documents = () => {
   };
 
   return (
-    <div className={styles.appLayout}>
-      <Sidebar user={mockData.user} />
-      
-      <div className={styles.mainWrapper}>
-        <Header date="Dim. 2 Février 2026" hasNotifications />
-        
-        <main className={styles.mainContent}>
-          <PageHeader 
-            onDownloadAll={() => console.log('Download all')}
-            onAddDocument={() => console.log('Add document')}
-          />
-          
-          <FeaturedDocument 
-            document={mockData.featuredDocument}
-            onDownload={() => console.log('Download featured')}
-            onView={() => console.log('View featured')}
-          />
-          
-          <StatsRow stats={mockData.stats} />
-          
-          <div className={styles.documentsLayout}>
-            <div className={styles.documentsMain}>
-              <div className={styles.card}>
-                <div className={styles.cardHeader}>
-                  <h3 className={styles.cardTitle}>
-                    <FolderIcon />
-                    Tous les documents
-                  </h3>
-                </div>
-                <div className={styles.cardBody}>
-                  <FiltersBar 
-                    activeFilter={activeFilter}
-                    onFilterChange={setActiveFilter}
-                    searchQuery={searchQuery}
-                    onSearchChange={setSearchQuery}
-                  />
-                  
-                  <div className={styles.documentsGrid}>
-                    {mockData.documents.map((doc, index) => (
-                      <DocumentCard 
-                        key={doc.id}
-                        document={doc}
-                        index={index}
-                        onDownload={(id) => console.log('Download', id)}
-                        onAction={(id) => console.log('Action', id)}
-                      />
-                    ))}
-                  </div>
+    <>
+      <Header date="Dim. 2 Février 2026" hasNotifications />
+
+      <main className={styles.mainContent}>
+        <PageHeader
+          onDownloadAll={() => console.log('Download all')}
+          onAddDocument={() => console.log('Add document')}
+        />
+
+        <FeaturedDocument
+          document={mockData.featuredDocument}
+          onDownload={() => console.log('Download featured')}
+          onView={() => console.log('View featured')}
+        />
+
+        <StatsRow stats={mockData.stats} />
+
+        <div className={styles.documentsLayout}>
+          <div className={styles.documentsMain}>
+            <div className={styles.card}>
+              <div className={styles.cardHeader}>
+                <h3 className={styles.cardTitle}>
+                  <FolderIcon />
+                  Tous les documents
+                </h3>
+              </div>
+              <div className={styles.cardBody}>
+                <FiltersBar
+                  activeFilter={activeFilter}
+                  onFilterChange={setActiveFilter}
+                  searchQuery={searchQuery}
+                  onSearchChange={setSearchQuery}
+                />
+
+                <div className={styles.documentsGrid}>
+                  {mockData.documents.map((doc, index) => (
+                    <DocumentCard
+                      key={doc.id}
+                      document={doc}
+                      index={index}
+                      onDownload={(id) => console.log('Download', id)}
+                      onAction={(id) => console.log('Action', id)}
+                    />
+                  ))}
                 </div>
               </div>
             </div>
-            
-            <div className={styles.documentsSidebar}>
-              <Checklist items={mockData.checklistItems} />
-              
-              <GenerateSection 
-                items={mockData.generateItems}
-                onGenerate={(type) => console.log('Generate', type)}
-              />
-              
-              <ActivityList activities={mockData.activities} />
-            </div>
           </div>
-        </main>
-      </div>
-    </div>
+
+          <div className={styles.documentsSidebar}>
+            <Checklist items={mockData.checklistItems} />
+
+            <GenerateSection
+              items={mockData.generateItems}
+              onGenerate={(type) => console.log('Generate', type)}
+            />
+
+            <ActivityList activities={mockData.activities} />
+          </div>
+        </div>
+      </main>
+    </>
   );
 };
 

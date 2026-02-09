@@ -193,104 +193,6 @@ const FileIcon = ({ className }) => (
 );
 
 /* ==========================================
-   SIDEBAR COMPONENT (IDENTIQUE AU DASHBOARD)
-========================================== */
-const Sidebar = ({ user }) => {
-  const navItems = {
-    principal: [
-      { icon: DashboardIcon, label: 'Tableau de bord', href: '#', active: false },
-      { icon: HomeIcon, label: 'Mon logement', href: '#', active: true },
-      { icon: PaymentIcon, label: 'Mes paiements', href: '#' },
-      { icon: DocumentIcon, label: 'Documents', href: '#' },
-    ],
-    communication: [
-      { icon: MessageIcon, label: 'Messages', href: '#', badge: 2 },
-      { icon: NotificationIcon, label: 'Notifications', href: '#', badge: 3 },
-    ],
-    explorer: [
-      { icon: SearchIcon, label: 'Rechercher un bien', href: '#' },
-    ],
-  };
-
-  const getInitials = (name) => {
-    return name.split(' ').map((n) => n[0]).join('').toUpperCase();
-  };
-
-  return (
-    <aside className={styles.sidebar}>
-      <div className={styles.sidebarHeader}>
-        <a href="#" className={styles.logo}>
-          <div className={styles.logoIcon}>
-            <HomeIcon />
-          </div>
-          <span className={styles.logoText}>
-            Immo<span>GN</span>
-          </span>
-        </a>
-      </div>
-
-      <nav className={styles.sidebarNav}>
-        <div className={styles.navSection}>
-          <span className={styles.navSectionTitle}>Principal</span>
-          {navItems.principal.map((item, index) => (
-            <a
-              key={index}
-              href={item.href}
-              className={`${styles.navLink} ${item.active ? styles.active : ''}`}
-            >
-              <item.icon />
-              {item.label}
-            </a>
-          ))}
-        </div>
-
-        <div className={styles.navSection}>
-          <span className={styles.navSectionTitle}>Communication</span>
-          {navItems.communication.map((item, index) => (
-            <a key={index} href={item.href} className={styles.navLink}>
-              <item.icon />
-              {item.label}
-              {item.badge && <span className={styles.navLinkBadge}>{item.badge}</span>}
-            </a>
-          ))}
-        </div>
-
-        <div className={styles.navSection}>
-          <span className={styles.navSectionTitle}>Explorer</span>
-          {navItems.explorer.map((item, index) => (
-            <a key={index} href={item.href} className={styles.navLink}>
-              <item.icon />
-              {item.label}
-            </a>
-          ))}
-        </div>
-      </nav>
-
-      <div className={styles.sidebarUser}>
-        <div className={styles.userCard}>
-          <div className={styles.userAvatar}>{getInitials(user.name)}</div>
-          <div className={styles.userInfo}>
-            <p className={styles.userName}>{user.name}</p>
-            <p className={styles.userRole}>
-              {user.role}
-              {user.verified && (
-                <span className={styles.verifiedBadge}>
-                  <VerifiedBadgeIcon />
-                  Vérifié
-                </span>
-              )}
-            </p>
-          </div>
-          <button className={styles.userMenuBtn}>
-            <DotsVerticalIcon />
-          </button>
-        </div>
-      </div>
-    </aside>
-  );
-};
-
-/* ==========================================
    HEADER COMPONENT
 ========================================== */
 const Header = ({ date, hasNotifications }) => {
@@ -697,45 +599,41 @@ const Mon_Logement = () => {
   };
 
   return (
-    <div className={styles.appLayout}>
-      <Sidebar user={mockData.user} />
-      
-      <div className={styles.mainWrapper}>
-        <Header date="Dim. 1 Février 2026" hasNotifications />
-        
-        <main className={styles.mainContent}>
-          <PageHeader 
-            onReportProblem={() => console.log('Report problem')}
-            onContactAgent={() => console.log('Contact agent')}
-          />
-          
-          <div className={styles.propertyLayout}>
-            <div className={styles.propertyMain}>
-              <Gallery 
-                images={images}
-                currentIndex={currentImageIndex}
-                onPrev={handlePrevImage}
-                onNext={handleNextImage}
-                onSelectImage={setCurrentImageIndex}
-              />
-              <PropertyDetails property={mockData.property} />
-              <Amenities amenities={mockData.amenities} />
-            </div>
-            
-            <div className={styles.propertySide}>
-              <BailInfo bail={mockData.bail} />
-              <RentInfo rent={mockData.rent} />
-              <Documents documents={mockData.documents} />
-              <AgentCard 
-                agent={mockData.agent}
-                onMessage={() => console.log('Message agent')}
-                onCall={() => console.log('Call agent')}
-              />
-            </div>
+    <>
+      <Header date="Dim. 1 Février 2026" hasNotifications />
+
+      <main className={styles.mainContent}>
+        <PageHeader
+          onReportProblem={() => console.log('Report problem')}
+          onContactAgent={() => console.log('Contact agent')}
+        />
+
+        <div className={styles.propertyLayout}>
+          <div className={styles.propertyMain}>
+            <Gallery
+              images={images}
+              currentIndex={currentImageIndex}
+              onPrev={handlePrevImage}
+              onNext={handleNextImage}
+              onSelectImage={setCurrentImageIndex}
+            />
+            <PropertyDetails property={mockData.property} />
+            <Amenities amenities={mockData.amenities} />
           </div>
-        </main>
-      </div>
-    </div>
+
+          <div className={styles.propertySide}>
+            <BailInfo bail={mockData.bail} />
+            <RentInfo rent={mockData.rent} />
+            <Documents documents={mockData.documents} />
+            <AgentCard
+              agent={mockData.agent}
+              onMessage={() => console.log('Message agent')}
+              onCall={() => console.log('Call agent')}
+            />
+          </div>
+        </div>
+      </main>
+    </>
   );
 };
 

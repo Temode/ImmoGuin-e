@@ -186,120 +186,6 @@ const TerraceIcon = ({ className }) => (
 );
 
 /* ==========================================
-   SIDEBAR COMPONENT
-========================================== */
-const Sidebar = ({ user }) => {
-  const navItems = {
-    principal: [
-      { icon: DashboardIcon, label: 'Tableau de bord', href: '#' },
-      { icon: HomeIcon, label: 'Mon logement', href: '#' },
-      { icon: PaymentIcon, label: 'Mes paiements', href: '#' },
-      { icon: DocumentIcon, label: 'Documents', href: '#' },
-    ],
-    recherche: [
-      { icon: SearchIcon, label: 'Rechercher un bien', href: '#', active: true },
-      { icon: HeartIcon, label: 'Mes favoris', href: '#', badge: 3, badgeGold: true },
-      { icon: NotificationIcon, label: 'Mes alertes', href: '#', badge: 2 },
-    ],
-    communication: [
-      { icon: MessageIcon, label: 'Messages', href: '#', badge: 2, badgeGold: true },
-      { icon: NotificationIcon, label: 'Notifications', href: '#', badge: 5, badgeGold: true },
-    ],
-  };
-
-  const getInitials = (name) => {
-    return name.split(' ').map((n) => n[0]).join('').toUpperCase();
-  };
-
-  return (
-    <aside className={styles.sidebar}>
-      <div className={styles.sidebarHeader}>
-        <a href="#" className={styles.logo}>
-          <div className={styles.logoIcon}>
-            <HomeIcon />
-          </div>
-          <span className={styles.logoText}>
-            Immo<span>GN</span>
-          </span>
-        </a>
-      </div>
-
-      <nav className={styles.sidebarNav}>
-        <div className={styles.navSection}>
-          <span className={styles.navSectionTitle}>Principal</span>
-          {navItems.principal.map((item, index) => (
-            <a
-              key={index}
-              href={item.href}
-              className={`${styles.navLink} ${item.active ? styles.active : ''}`}
-            >
-              <item.icon />
-              {item.label}
-            </a>
-          ))}
-        </div>
-
-        <div className={styles.navSection}>
-          <span className={styles.navSectionTitle}>Recherche</span>
-          {navItems.recherche.map((item, index) => (
-            <a
-              key={index}
-              href={item.href}
-              className={`${styles.navLink} ${item.active ? styles.active : ''}`}
-            >
-              <item.icon />
-              {item.label}
-              {item.badge && (
-                <span className={`${styles.navLinkBadge} ${item.badgeGold ? styles.gold : ''}`}>
-                  {item.badge}
-                </span>
-              )}
-            </a>
-          ))}
-        </div>
-
-        <div className={styles.navSection}>
-          <span className={styles.navSectionTitle}>Communication</span>
-          {navItems.communication.map((item, index) => (
-            <a
-              key={index}
-              href={item.href}
-              className={`${styles.navLink} ${item.active ? styles.active : ''}`}
-            >
-              <item.icon />
-              {item.label}
-              {item.badge && (
-                <span className={`${styles.navLinkBadge} ${item.badgeGold ? styles.gold : ''}`}>
-                  {item.badge}
-                </span>
-              )}
-            </a>
-          ))}
-        </div>
-      </nav>
-
-      <div className={styles.sidebarUser}>
-        <div className={styles.userCard}>
-          <div className={styles.userAvatar}>{getInitials(user.name)}</div>
-          <div className={styles.userInfo}>
-            <p className={styles.userName}>{user.name}</p>
-            <p className={styles.userRole}>
-              {user.role}
-              {user.verified && (
-                <span className={styles.verifiedBadge}>
-                  <VerifiedBadgeIcon />
-                  Vérifié
-                </span>
-              )}
-            </p>
-          </div>
-        </div>
-      </div>
-    </aside>
-  );
-};
-
-/* ==========================================
    SEARCH HEADER COMPONENT
 ========================================== */
 const SearchHeader = ({ 
@@ -799,69 +685,65 @@ const SearchProperty = () => {
   }));
 
   return (
-    <div className={styles.appLayout}>
-      <Sidebar user={mockData.user} />
+    <>
+      <SearchHeader
+        resultsCount={247}
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        activeFilters={activeFilters}
+        onRemoveFilter={handleRemoveFilter}
+        onClearFilters={handleClearFilters}
+      />
 
-      <div className={styles.mainWrapper}>
-        <SearchHeader
-          resultsCount={247}
-          viewMode={viewMode}
-          onViewModeChange={setViewMode}
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          activeFilters={activeFilters}
-          onRemoveFilter={handleRemoveFilter}
-          onClearFilters={handleClearFilters}
+      <main className={styles.mainContent}>
+        <FiltersPanel
+          filters={{}}
+          onFilterChange={() => {}}
+          onReset={() => console.log('Reset filters')}
         />
 
-        <main className={styles.mainContent}>
-          <FiltersPanel
-            filters={{}}
-            onFilterChange={() => {}}
-            onReset={() => console.log('Reset filters')}
-          />
+        <div className={styles.resultsArea}>
+          <AlertBanner />
 
-          <div className={styles.resultsArea}>
-            <AlertBanner />
-
-            <div className={styles.resultsHeader}>
-              <p className={styles.resultsInfo}>
-                <strong>247 biens</strong> correspondent à votre recherche
-              </p>
-              <div className={styles.sortDropdown}>
-                <span className={styles.sortLabel}>Trier par :</span>
-                <select
-                  className={styles.sortSelect}
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                >
-                  <option value="recent">Les plus récents</option>
-                  <option value="price-asc">Prix croissant</option>
-                  <option value="price-desc">Prix décroissant</option>
-                  <option value="area-asc">Surface croissante</option>
-                </select>
-              </div>
+          <div className={styles.resultsHeader}>
+            <p className={styles.resultsInfo}>
+              <strong>247 biens</strong> correspondent à votre recherche
+            </p>
+            <div className={styles.sortDropdown}>
+              <span className={styles.sortLabel}>Trier par :</span>
+              <select
+                className={styles.sortSelect}
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+              >
+                <option value="recent">Les plus récents</option>
+                <option value="price-asc">Prix croissant</option>
+                <option value="price-desc">Prix décroissant</option>
+                <option value="area-asc">Surface croissante</option>
+              </select>
             </div>
-
-            <div className={styles.propertyGrid}>
-              {propertiesWithFavorites.map((property) => (
-                <PropertyCard
-                  key={property.id}
-                  property={property}
-                  onFavoriteToggle={handleFavoriteToggle}
-                />
-              ))}
-            </div>
-
-            <Pagination
-              currentPage={currentPage}
-              totalPages={25}
-              onPageChange={setCurrentPage}
-            />
           </div>
-        </main>
-      </div>
-    </div>
+
+          <div className={styles.propertyGrid}>
+            {propertiesWithFavorites.map((property) => (
+              <PropertyCard
+                key={property.id}
+                property={property}
+                onFavoriteToggle={handleFavoriteToggle}
+              />
+            ))}
+          </div>
+
+          <Pagination
+            currentPage={currentPage}
+            totalPages={25}
+            onPageChange={setCurrentPage}
+          />
+        </div>
+      </main>
+    </>
   );
 };
 

@@ -4,6 +4,7 @@ import SocialAuthPage from "./components/pages/SocialAuthPage";
 import EmailAuthPage from "./components/pages/EmailAuthPage";
 import UserRoleSelection from "./components/pages/UserRoleSelection";
 import Home from "./components/pages/Home";
+import DashboardLocataireLayout from './components/dashboard_locataire/shared/DashboardLocataireLayout';
 import Dashboard_Locataire from './components/dashboard_locataire/Dashboard_Locataire';
 import Mon_Logement from './components/dashboard_locataire/Mon_Logement';
 import Mes_Paiements from './components/dashboard_locataire/Mes_Paiements';
@@ -20,13 +21,16 @@ export default function App() {
           <Route path="/auth" element={<SocialAuthPage />} />
           <Route path="/auth/email" element={<EmailAuthPage />} />
           <Route path="/user-role" element={<UserRoleSelection />} />
-          <Route path='/dashbord-locataire' element={<Dashboard_Locataire />} />
-          <Route path='/mon-logement' element={<Mon_Logement />} />
-          <Route path="/mes_paiements" element={<Mes_Paiements />} />
-          <Route path="/documents" element={<Documents />} />
-          <Route path="/messages" element={<Messages />} />
-          <Route path="/notifications" element={<Notifications />} />
-          <Route path="/searchproperty" element={<SearchProperty />} />
+
+          <Route path="/dashboard-locataire" element={<DashboardLocataireLayout />}>
+            <Route index element={<Dashboard_Locataire />} />
+            <Route path="mon-logement" element={<Mon_Logement />} />
+            <Route path="mes-paiements" element={<Mes_Paiements />} />
+            <Route path="documents" element={<Documents />} />
+            <Route path="messages" element={<Messages />} />
+            <Route path="notifications" element={<Notifications />} />
+            <Route path="recherche" element={<SearchProperty />} />
+          </Route>
 
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>

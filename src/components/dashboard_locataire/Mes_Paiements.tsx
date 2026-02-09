@@ -138,104 +138,6 @@ const XIcon = ({ className }) => (
 );
 
 /* ==========================================
-   SIDEBAR COMPONENT (IDENTIQUE AU DASHBOARD)
-========================================== */
-const Sidebar = ({ user }) => {
-  const navItems = {
-    principal: [
-      { icon: DashboardIcon, label: 'Tableau de bord', href: '#', active: false },
-      { icon: HomeIcon, label: 'Mon logement', href: '#', active: false },
-      { icon: PaymentIcon, label: 'Mes paiements', href: '#', active: true },
-      { icon: DocumentIcon, label: 'Documents', href: '#' },
-    ],
-    communication: [
-      { icon: MessageIcon, label: 'Messages', href: '#', badge: 2 },
-      { icon: NotificationIcon, label: 'Notifications', href: '#', badge: 3 },
-    ],
-    explorer: [
-      { icon: SearchIcon, label: 'Rechercher un bien', href: '#' },
-    ],
-  };
-
-  const getInitials = (name) => {
-    return name.split(' ').map((n) => n[0]).join('').toUpperCase();
-  };
-
-  return (
-    <aside className={styles.sidebar}>
-      <div className={styles.sidebarHeader}>
-        <a href="#" className={styles.logo}>
-          <div className={styles.logoIcon}>
-            <HomeIcon />
-          </div>
-          <span className={styles.logoText}>
-            Immo<span>GN</span>
-          </span>
-        </a>
-      </div>
-
-      <nav className={styles.sidebarNav}>
-        <div className={styles.navSection}>
-          <span className={styles.navSectionTitle}>Principal</span>
-          {navItems.principal.map((item, index) => (
-            <a
-              key={index}
-              href={item.href}
-              className={`${styles.navLink} ${item.active ? styles.active : ''}`}
-            >
-              <item.icon />
-              {item.label}
-            </a>
-          ))}
-        </div>
-
-        <div className={styles.navSection}>
-          <span className={styles.navSectionTitle}>Communication</span>
-          {navItems.communication.map((item, index) => (
-            <a key={index} href={item.href} className={styles.navLink}>
-              <item.icon />
-              {item.label}
-              {item.badge && <span className={styles.navLinkBadge}>{item.badge}</span>}
-            </a>
-          ))}
-        </div>
-
-        <div className={styles.navSection}>
-          <span className={styles.navSectionTitle}>Explorer</span>
-          {navItems.explorer.map((item, index) => (
-            <a key={index} href={item.href} className={styles.navLink}>
-              <item.icon />
-              {item.label}
-            </a>
-          ))}
-        </div>
-      </nav>
-
-      <div className={styles.sidebarUser}>
-        <div className={styles.userCard}>
-          <div className={styles.userAvatar}>{getInitials(user.name)}</div>
-          <div className={styles.userInfo}>
-            <p className={styles.userName}>{user.name}</p>
-            <p className={styles.userRole}>
-              {user.role}
-              {user.verified && (
-                <span className={styles.verifiedBadge}>
-                  <VerifiedBadgeIcon />
-                  Vérifié
-                </span>
-              )}
-            </p>
-          </div>
-          <button className={styles.userMenuBtn}>
-            <DotsVerticalIcon />
-          </button>
-        </div>
-      </div>
-    </aside>
-  );
-};
-
-/* ==========================================
    HEADER COMPONENT
 ========================================== */
 const Header = ({ date, hasNotifications }) => {
@@ -710,70 +612,66 @@ const Mes_Paiements = () => {
   };
 
   return (
-    <div className={styles.appLayout}>
-      <Sidebar user={mockData.user} />
-      
-      <div className={styles.mainWrapper}>
-        <Header date="Dim. 1 Février 2026" hasNotifications />
-        
-        <main className={styles.mainContent}>
-          <PageHeader 
-            onExport={() => console.log('Export all')}
-            onManualPay={() => console.log('Manual pay')}
-          />
-          
-          <StatsGrid stats={mockData.stats} />
-          
-          <div className={styles.paymentsLayout}>
-            <div className={styles.paymentsMain}>
-              <NextPaymentCard payment={mockData.nextPayment} />
-              
-              <div className={styles.card}>
-                <div className={styles.cardHeader}>
-                  <h3 className={styles.cardTitle}>
-                    <ClockIcon />
-                    Historique des paiements
-                  </h3>
-                </div>
-                <div className={styles.cardBody}>
-                  <FiltersBar 
-                    activeFilter={activeFilter}
-                    onFilterChange={setActiveFilter}
-                    searchQuery={searchQuery}
-                    onSearchChange={setSearchQuery}
-                  />
-                  
-                  <PaymentTable 
-                    payments={mockData.payments}
-                    onDownload={(id) => console.log('Download receipt', id)}
-                  />
-                  
-                  <Pagination 
-                    currentPage={currentPage}
-                    totalPages={2}
-                    totalItems={8}
-                    itemsPerPage={5}
-                    onPageChange={setCurrentPage}
-                  />
-                </div>
+    <>
+      <Header date="Dim. 1 Février 2026" hasNotifications />
+
+      <main className={styles.mainContent}>
+        <PageHeader
+          onExport={() => console.log('Export all')}
+          onManualPay={() => console.log('Manual pay')}
+        />
+
+        <StatsGrid stats={mockData.stats} />
+
+        <div className={styles.paymentsLayout}>
+          <div className={styles.paymentsMain}>
+            <NextPaymentCard payment={mockData.nextPayment} />
+
+            <div className={styles.card}>
+              <div className={styles.cardHeader}>
+                <h3 className={styles.cardTitle}>
+                  <ClockIcon />
+                  Historique des paiements
+                </h3>
+              </div>
+              <div className={styles.cardBody}>
+                <FiltersBar
+                  activeFilter={activeFilter}
+                  onFilterChange={setActiveFilter}
+                  searchQuery={searchQuery}
+                  onSearchChange={setSearchQuery}
+                />
+
+                <PaymentTable
+                  payments={mockData.payments}
+                  onDownload={(id) => console.log('Download receipt', id)}
+                />
+
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={2}
+                  totalItems={8}
+                  itemsPerPage={5}
+                  onPageChange={setCurrentPage}
+                />
               </div>
             </div>
-            
-            <div className={styles.paymentsSide}>
-              <PaymentMethodCard 
-                method={mockData.paymentMethod}
-                onEdit={() => console.log('Edit method')}
-                onAdd={() => console.log('Add method')}
-              />
-              
-              <YearlyChart data={mockData.chartData} />
-              
-              <QuickActions actions={mockData.quickActions} />
-            </div>
           </div>
-        </main>
-      </div>
-    </div>
+
+          <div className={styles.paymentsSide}>
+            <PaymentMethodCard
+              method={mockData.paymentMethod}
+              onEdit={() => console.log('Edit method')}
+              onAdd={() => console.log('Add method')}
+            />
+
+            <YearlyChart data={mockData.chartData} />
+
+            <QuickActions actions={mockData.quickActions} />
+          </div>
+        </div>
+      </main>
+    </>
   );
 };
 
