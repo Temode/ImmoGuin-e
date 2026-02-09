@@ -1,73 +1,94 @@
-# React + TypeScript + Vite
+# ImmoGuinée - Plateforme Immobilière en Guinée
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+ImmoGuinée est une plateforme immobilière moderne conçue spécifiquement pour le marché guinéen. Elle vise à connecter les propriétaires, les locataires et les agents immobiliers de manière sécurisée et transparente.
 
-Currently, two official plugins are available:
+## Fonctionnalités
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Vérification KYC** : Tous les utilisateurs sont vérifiés via une identification biométrique
+- **Paiements automatisés** : Prélèvements automatiques des loyers
+- **Tableaux de bord clairs** : Suivi en temps réel des revenus, locataires et paiements
+- **Contrats automatiques** : Génération de contrats de bail avec signature électronique
+- **Gestion diaspora** : Service de gestion de biens pour les propriétaires vivant à l'étranger
+- **Messagerie intégrée** : Communication directe entre les parties
 
-## React Compiler
+## Technologies utilisées
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React (v19.2.0)
+- TypeScript
+- Vite
+- React Router DOM
+- Lucide React (pour les icônes)
+- CSS Modules
+- Jest et React Testing Library (pour les tests)
 
-## Expanding the ESLint configuration
+## Architecture du projet
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+src/
+├── App.tsx                 # Point d'entrée principal de l'application
+├── context/                # Gestion d'état avec Context API
+│   └── PropertyContext.tsx # Contexte pour les données dynamiques
+├── components/
+│   ├── pages/             # Pages principales
+│   │   ├── Home.tsx       # Page d'accueil
+│   │   ├── AuthPage.tsx   # Pages d'authentification
+│   │   └── ...
+│   └── dashboard_locataire/ # Composants du tableau de bord locataire
+│       ├── Dashboard_Locataire.tsx
+│       ├── Mon_Logement.tsx
+│       ├── Mes_Paiements.tsx
+│       └── ...
+├── assets/                # Images et autres ressources
+└── ...
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Installation
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+1. Clonez le dépôt :
+```bash
+git clone https://github.com/votre-compte/immo-guinee.git
+cd imo-guinee
 ```
+
+2. Installez les dépendances :
+```bash
+npm install
+```
+
+3. Démarrez le serveur de développement :
+```bash
+npm run dev
+```
+
+L'application sera accessible à l'adresse http://localhost:5173
+
+## Scripts disponibles
+
+- `npm run dev` - Démarre le serveur de développement
+- `npm run build` - Crée une version optimisée pour la production
+- `npm run preview` - Prévisualise la version de production localement
+- `npm run lint` - Exécute ESLint pour vérifier le code
+- `npm run test` - Lance les tests avec Jest
+- `npm run test:watch` - Lance les tests en mode surveillance
+- `npm run test:coverage` - Génère un rapport de couverture de test
+
+## Tests
+
+Le projet utilise Jest et React Testing Library pour les tests. Les fichiers de test se trouvent à côté des composants qu'ils testent.
+
+Pour exécuter les tests :
+```bash
+npm run test
+```
+
+## Structure de gestion d'état
+
+Le projet utilise React Context API pour gérer l'état global des données dynamiques comme les propriétés immobilières, les fonctionnalités, les points de confiance, etc.
+
+## Contribution
+
+Les contributions sont les bienvenues ! Veuillez d'abord discuter des modifications que vous souhaitez apporter via les issues, puis soumettre une Pull Request.
+
+## Licence
+
+Ce projet est sous licence MIT.

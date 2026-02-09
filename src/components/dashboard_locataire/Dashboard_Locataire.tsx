@@ -1,4 +1,4 @@
-import styles from './Dashbord_Locataire.module.css';
+import styles from './Dashboard_Locataire.module.css';
 
 /* ==========================================
    ICONS COMPONENTS
@@ -585,24 +585,24 @@ const Dashboard_Locataire = () => {
   return (
     <div className={styles.appLayout}>
       <Sidebar user={mockData.user} />
-      
+
       <div className={styles.mainWrapper}>
         <Header title="Tableau de bord" date="Dim. 1 Février 2026" hasNotifications />
-        
+
         <main className={styles.mainContent}>
           <WelcomeBanner userName="Mamadou" property={mockData.property} />
-          
+
           <div className={styles.dashboardGrid}>
             <div className={styles.dashboardMain}>
-              <RentCard 
-                rent={mockData.rent} 
+              <RentCard
+                rent={mockData.rent}
                 paymentMethod={mockData.paymentMethod}
                 onEditPaymentMethod={handleEditPaymentMethod}
               />
               <QuickActions />
               <PaymentHistory payments={mockData.payments} />
             </div>
-            
+
             <div className={styles.dashboardSide}>
               <AgentCard agent={mockData.agent} onMessage={handleMessageAgent} onCall={handleCallAgent} />
               <HousingDetails housing={mockData.housing} />

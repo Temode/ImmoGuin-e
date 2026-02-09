@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './Home.module.css';
+import { usePropertyContext } from '../../context/PropertyContext';
 import {
   Check,
   ArrowRight,
@@ -11,9 +12,6 @@ import {
   Globe,
   MessageCircle,
   MapPin,
-  Bed,
-  ShowerHead,
-  Square,
   Lock,
   DollarSign,
   FileText,
@@ -22,58 +20,272 @@ import {
   Facebook,
   Twitter,
   Linkedin,
-  Instagram
+  Instagram,
+  Heart,
+  Star,
+  Image,
+  Home as HomeIcon,
+  Maximize2,
+  Snowflake,
+  Zap as BoltIcon,
+  Car,
+  Sofa,
+  CloudSun
 } from 'lucide-react';
 
+/* ==========================================
+   VERIFIED BADGE ICON COMPONENT
+========================================== */
+const VerifiedBadgeIcon: React.FC<{ className?: string }> = ({ className }) => (
+  <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+    <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+  </svg>
+);
+
+/* ==========================================
+   PROPERTY CARD COMPONENT (Style SearchProperty)
+========================================== */
+interface PropertyFeature {
+  type: string;
+  label: string;
+}
+
+interface PropertyBadge {
+  type: 'new' | 'premium' | 'verified';
+  label: string;
+}
+
+interface PropertyAgent {
+  name: string;
+  initials: string;
+  verified: boolean;
+}
+
+interface Property {
+  id: number;
+  image: string;
+  title: string;
+  price: number;
+  location: string;
+  photosCount: number;
+  premium: boolean;
+  badges: PropertyBadge[];
+  features: PropertyFeature[];
+  agent: PropertyAgent;
+  isFavorite?: boolean;
+}
+
+interface PropertyCardProps {
+  property: Property;
+  onFavoriteToggle: (id: number) => void;
+}
+
+const PropertyCard: React.FC<PropertyCardProps> = ({ property, onFavoriteToggle }) => {
+  const featureIcons: Record<string, React.FC<{ className?: string }>> = {
+    rooms: HomeIcon,
+    area: Maximize2,
+    ac: Snowflake,
+    generator: BoltIcon,
+    parking: Car,
+    furnished: Sofa,
+    terrace: CloudSun,
+    balcony: CloudSun,
+  };
+
+  const formatPrice = (price: number) => {
+    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  };
+
+  return (
+    <article className={`${styles.propertyCard} ${property.premium ? styles.premium : ''}`}>
+      <div className={styles.propertyImage}>
+        <img src={property.image} alt={property.title} />
+        {property.badges && property.badges.length > 0 && (
+          <div className={styles.propertyBadges}>
+            {property.badges.map((badge, index) => (
+              <span key={index} className={`${styles.propertyBadge} ${styles[badge.type]}`}>
+                {badge.type === 'premium' && <Star className={styles.starIcon} />}
+                {badge.label}
+              </span>
+            ))}
+          </div>
+        )}
+        <button
+          className={`${styles.propertyFavorite} ${property.isFavorite ? styles.active : ''}`}
+          onClick={(e) => {
+            e.preventDefault();
+            onFavoriteToggle(property.id);
+          }}
+        >
+          <Heart className={styles.heartIcon} fill={property.isFavorite ? 'currentColor' : 'none'} />
+        </button>
+        <span className={styles.propertyPhotosCount}>
+          <Image className={styles.imageIcon} />
+          {property.photosCount}
+        </span>
+      </div>
+      <div className={styles.propertyContent}>
+        <p className={styles.propertyPrice}>
+          {formatPrice(property.price)} <span>GNF/mois</span>
+        </p>
+        <h3 className={styles.propertyTitle}>{property.title}</h3>
+        <p className={styles.propertyLocation}>
+          <MapPin className={styles.mapPinIcon} />
+          {property.location}
+        </p>
+        <div className={styles.propertyFeatures}>
+          {property.features.map((feature, index) => {
+            const IconComponent = featureIcons[feature.type] || HomeIcon;
+            return (
+              <span key={index} className={styles.propertyFeature}>
+                <IconComponent className={styles.featureIcon} />
+                {feature.label}
+              </span>
+            );
+          })}
+        </div>
+        <div className={styles.propertyFooter}>
+          <div className={styles.propertyAgent}>
+            <div className={styles.propertyAgentAvatar}>{property.agent.initials}</div>
+            <div className={styles.propertyAgentInfo}>
+              <span className={styles.propertyAgentName}>{property.agent.name}</span>
+              {property.agent.verified && (
+                <span className={styles.propertyAgentVerified}>
+                  <VerifiedBadgeIcon className={styles.verifiedIcon} />
+                  Vérifié
+                </span>
+              )}
+            </div>
+          </div>
+          <button className={styles.propertyContactBtn}>Contacter</button>
+        </div>
+      </div>
+    </article>
+  );
+};
+
 const Home: React.FC = () => {
-  // Données dynamiques pour les propriétés
-  const properties = [
+  const { state } = usePropertyContext();
+
+  // Données des propriétés identiques à SearchProperty
+  const [favorites, setFavorites] = useState<number[]>([1, 5]);
+
+  const properties: Property[] = [
     {
       id: 1,
-      title: "Villa Moderne Kaloum",
-      location: "Quartier Almamya, Conakry",
-      price: "2,500,000",
-      period: "/mois",
-      type: "À Louer",
-      verified: true,
-      bedrooms: 5,
-      bathrooms: 3,
-      area: "250m²",
-      image: "https://images.unsplash.com/photo-1613977257363-707ba9348227?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-      priceValue: 2500000
+      image: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&h=400&fit=crop',
+      title: 'Bel appartement F3 avec vue panoramique',
+      price: 2500000,
+      location: 'Kipé, Ratoma',
+      photosCount: 12,
+      premium: true,
+      badges: [{ type: 'premium', label: 'Premium' }],
+      features: [
+        { type: 'rooms', label: '3 pièces' },
+        { type: 'area', label: '85 m²' },
+        { type: 'ac', label: 'Climatisé' },
+      ],
+      agent: { name: 'Abdoulaye D.', initials: 'AD', verified: true },
     },
     {
       id: 2,
-      title: "Appartement Centre-Ville",
-      location: "Kipé, Ratoma",
-      price: "450M",
-      period: "",
-      type: "À Vendre",
-      verified: false,
-      bedrooms: 3,
-      bathrooms: 2,
-      area: "120m²",
-      image: "https://images.unsplash.com/photo-1545251142-f32339076e6d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-      priceValue: 450000000
+      image: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=600&h=400&fit=crop',
+      title: 'Appartement F2 moderne et lumineux',
+      price: 1800000,
+      location: 'Nongo, Ratoma',
+      photosCount: 8,
+      premium: false,
+      badges: [{ type: 'new', label: 'Nouveau' }],
+      features: [
+        { type: 'rooms', label: '2 pièces' },
+        { type: 'area', label: '60 m²' },
+        { type: 'generator', label: 'Groupe élec.' },
+      ],
+      agent: { name: 'Fatoumata K.', initials: 'FK', verified: true },
     },
     {
       id: 3,
-      title: "Studio Meublé Moderne",
-      location: "Dixinn, Conakry",
-      price: "1,200,000",
-      period: "/mois",
-      type: "À Louer",
-      verified: true,
-      bedrooms: 1,
-      bathrooms: 1,
-      area: "45m²",
-      image: "https://images.unsplash.com/photo-1575929026510-515e7101cb06?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-      priceValue: 1200000
-    }
+      image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600&h=400&fit=crop',
+      title: 'Villa F4 avec jardin et parking',
+      price: 3000000,
+      location: 'Lambanyi, Ratoma',
+      photosCount: 15,
+      premium: false,
+      badges: [{ type: 'verified', label: 'Vérifié' }],
+      features: [
+        { type: 'rooms', label: '4 pièces' },
+        { type: 'area', label: '120 m²' },
+        { type: 'parking', label: 'Parking' },
+      ],
+      agent: { name: 'Ibrahima B.', initials: 'IB', verified: true },
+    },
+    {
+      id: 4,
+      image: 'https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=600&h=400&fit=crop',
+      title: 'Studio meublé tout équipé',
+      price: 1200000,
+      location: 'Cosa, Ratoma',
+      photosCount: 6,
+      premium: false,
+      badges: [],
+      features: [
+        { type: 'rooms', label: '1 pièce' },
+        { type: 'area', label: '30 m²' },
+        { type: 'furnished', label: 'Meublé' },
+      ],
+      agent: { name: 'Mariama S.', initials: 'MS', verified: true },
+    },
+    {
+      id: 5,
+      image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&h=400&fit=crop',
+      title: 'Appartement F3 de standing avec terrasse',
+      price: 2800000,
+      location: 'Taouyah, Ratoma',
+      photosCount: 18,
+      premium: true,
+      badges: [
+        { type: 'new', label: 'Nouveau' },
+        { type: 'premium', label: 'Premium' },
+      ],
+      features: [
+        { type: 'rooms', label: '3 pièces' },
+        { type: 'area', label: '95 m²' },
+        { type: 'terrace', label: 'Terrasse' },
+      ],
+      agent: { name: 'Abdoulaye D.', initials: 'AD', verified: true },
+    },
+    {
+      id: 6,
+      image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&h=400&fit=crop',
+      title: 'Appartement F2 rénové avec balcon',
+      price: 1500000,
+      location: 'Koloma, Ratoma',
+      photosCount: 10,
+      premium: false,
+      badges: [],
+      features: [
+        { type: 'rooms', label: '2 pièces' },
+        { type: 'area', label: '55 m²' },
+        { type: 'balcony', label: 'Balcon' },
+      ],
+      agent: { name: 'Oumar C.', initials: 'OC', verified: true },
+    },
   ];
 
-  // Données dynamiques pour les fonctionnalités
-  const features = [
+  const propertiesWithFavorites = properties.map((p) => ({
+    ...p,
+    isFavorite: favorites.includes(p.id),
+  }));
+
+  const handleFavoriteToggle = (propertyId: number) => {
+    setFavorites((prev) =>
+      prev.includes(propertyId)
+        ? prev.filter((id) => id !== propertyId)
+        : [...prev, propertyId]
+    );
+  };
+
+  const features = state.features.length > 0 ? state.features : [
     {
       id: 1,
       title: "100% Vérifiés KYC",
@@ -112,8 +324,7 @@ const Home: React.FC = () => {
     }
   ];
 
-  // Données dynamiques pour les points de confiance
-  const trustPoints = [
+  const trustPoints = state.trustPoints.length > 0 ? state.trustPoints : [
     {
       id: 1,
       title: "Vérification Biométrique",
@@ -140,8 +351,7 @@ const Home: React.FC = () => {
     }
   ];
 
-  // Données dynamiques pour les cartes visuelles de confiance
-  const trustVisualCards = [
+  const trustVisualCards = state.trustVisualCards.length > 0 ? state.trustVisualCards : [
     {
       id: 1,
       number: "100%",
@@ -168,8 +378,7 @@ const Home: React.FC = () => {
     }
   ];
 
-  // Données dynamiques pour les liens du pied de page
-  const footerLinks = {
+  const footerLinks = state.footerLinks.platform.length > 0 ? state.footerLinks : {
     platform: [
       { id: 1, text: "Rechercher", href: "#" },
       { id: 2, text: "À Louer", href: "#" },
@@ -201,7 +410,7 @@ const Home: React.FC = () => {
   const [activeTab, setActiveTab] = useState('rent');
 
   // État pour les données de statistiques
-  const stats = [
+  const stats = state.stats.length > 0 ? state.stats : [
     { id: 1, number: "2,500+", label: "Biens disponibles" },
     { id: 2, number: "850+", label: "Agents vérifiés" },
     { id: 3, number: "100%", label: "Sécurisé KYC" }
@@ -220,7 +429,6 @@ const Home: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Recherche soumise:', searchData);
-    // Ici, vous pouvez ajouter la logique pour filtrer les propriétés
   };
 
   return (
@@ -418,7 +626,7 @@ const Home: React.FC = () => {
               const IconComponent = feature.icon;
               return (
                 <div key={feature.id} className={styles.featureCard}>
-                  <div className={styles.featureIcon}>
+                  <div className={styles.featureIconBox}>
                     <IconComponent className={styles.icon} />
                   </div>
                   <h3 className={styles.featureTitle}>{feature.title}</h3>
@@ -430,7 +638,7 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* PROPERTIES SHOWCASE */}
+      {/* PROPERTIES SHOWCASE - Style SearchProperty */}
       <section className={styles.properties}>
         <div className={styles.propertiesContainer}>
           <div className={styles.sectionHeader}>
@@ -443,48 +651,12 @@ const Home: React.FC = () => {
           </div>
 
           <div className={styles.propertiesGrid}>
-            {properties.map(property => (
-              <div key={property.id} className={styles.propertyCard}>
-                <div className={styles.propertyImage}>
-                  <img
-                    src={property.image}
-                    alt={property.title}
-                    className={styles.propertyImg}
-                  />
-                  <div className={styles.propertyBadge}>
-                    {property.verified && (
-                      <span className={`${styles.badge} ${styles.badgeVerified}`}>
-                        <Check className={styles.checkIcon} /> Vérifié
-                      </span>
-                    )}
-                    <span className={`${styles.badge} ${styles.badgeType}`}>{property.type}</span>
-                  </div>
-                </div>
-                <div className={styles.propertyContent}>
-                  <h3 className={styles.propertyTitle}>{property.title}</h3>
-                  <div className={styles.propertyLocation}>
-                    <MapPin className={styles.mapPinIcon} /> {property.location}
-                  </div>
-                  <div className={styles.propertyFeatures}>
-                    <span className={styles.propertyFeature}>
-                      <Bed className={styles.bedIcon} /> {property.bedrooms} chambres
-                    </span>
-                    <span className={styles.propertyFeature}>
-                      <ShowerHead className={styles.showerIcon} /> {property.bathrooms} SDB
-                    </span>
-                    <span className={styles.propertyFeature}>
-                      <Square className={styles.squareIcon} /> {property.area}
-                    </span>
-                  </div>
-                  <div className={styles.propertyFooter}>
-                    <div>
-                      <span className={styles.propertyPrice}>{property.price}</span>
-                      {property.period && <span className={styles.propertyPricePeriod}>{property.period}</span>}
-                    </div>
-                    <button className={`${styles.btn} ${property.type === 'À Vendre' ? styles.btnSecondary : styles.btnOutline}`}>Voir</button>
-                  </div>
-                </div>
-              </div>
+            {propertiesWithFavorites.map((property) => (
+              <PropertyCard
+                key={property.id}
+                property={property}
+                onFavoriteToggle={handleFavoriteToggle}
+              />
             ))}
           </div>
 
