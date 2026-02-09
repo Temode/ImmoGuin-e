@@ -126,105 +126,6 @@ const ReceiptIcon = ({ className }) => (
 );
 
 /* ==========================================
-   SIDEBAR COMPONENT
-========================================== */
-const Sidebar = ({ user }) => {
-  const navItems = {
-    principal: [
-      { icon: DashboardIcon, label: 'Tableau de bord', href: '#' },
-      { icon: HomeIcon, label: 'Mon logement', href: '#' },
-      { icon: PaymentIcon, label: 'Mes paiements', href: '#' },
-      { icon: DocumentIcon, label: 'Documents', href: '#' },
-    ],
-    communication: [
-      { icon: MessageIcon, label: 'Messages', href: '#', badge: 2 },
-      { icon: NotificationIcon, label: 'Notifications', href: '#', active: true, badge: 3 },
-    ],
-    explorer: [
-      { icon: SearchIcon, label: 'Rechercher un bien', href: '#' },
-    ],
-  };
-
-  const getInitials = (name) => {
-    return name.split(' ').map((n) => n[0]).join('').toUpperCase();
-  };
-
-  return (
-    <aside className={styles.sidebar}>
-      <div className={styles.sidebarHeader}>
-        <a href="#" className={styles.logo}>
-          <div className={styles.logoIcon}>
-            <HomeIcon />
-          </div>
-          <span className={styles.logoText}>
-            Immo<span>GN</span>
-          </span>
-        </a>
-      </div>
-
-      <nav className={styles.sidebarNav}>
-        <div className={styles.navSection}>
-          <span className={styles.navSectionTitle}>Principal</span>
-          {navItems.principal.map((item, index) => (
-            <a
-              key={index}
-              href={item.href}
-              className={`${styles.navLink} ${item.active ? styles.active : ''}`}
-            >
-              <item.icon />
-              {item.label}
-            </a>
-          ))}
-        </div>
-
-        <div className={styles.navSection}>
-          <span className={styles.navSectionTitle}>Communication</span>
-          {navItems.communication.map((item, index) => (
-            <a
-              key={index}
-              href={item.href}
-              className={`${styles.navLink} ${item.active ? styles.active : ''}`}
-            >
-              <item.icon />
-              {item.label}
-              {item.badge && <span className={styles.navLinkBadge}>{item.badge}</span>}
-            </a>
-          ))}
-        </div>
-
-        <div className={styles.navSection}>
-          <span className={styles.navSectionTitle}>Explorer</span>
-          {navItems.explorer.map((item, index) => (
-            <a key={index} href={item.href} className={styles.navLink}>
-              <item.icon />
-              {item.label}
-            </a>
-          ))}
-        </div>
-      </nav>
-
-      <div className={styles.sidebarUser}>
-        <div className={styles.userCard}>
-          <div className={styles.userAvatar}>{getInitials(user.name)}</div>
-          <div className={styles.userInfo}>
-            <p className={styles.userName}>{user.name}</p>
-            <p className={styles.userRole}>
-              {user.role}
-              {user.verified && (
-                <span className={styles.verifiedBadge}>
-                  <VerifiedBadgeIcon />
-                  Vérifié
-                </span>
-              )}
-            </p>
-          </div>
-        </div>
-      </div>
-    </aside>
-  );
-};
-
-/* ==========================================
    HEADER COMPONENT
 ========================================== */
 const Header = ({ date }) => {
@@ -640,44 +541,40 @@ const Notifications = () => {
     .filter((n) => n.unread).length;
 
   return (
-    <div className={styles.appLayout}>
-      <Sidebar user={mockData.user} />
+    <>
+      <Header date="Dim. 2 Février 2026" />
 
-      <div className={styles.mainWrapper}>
-        <Header date="Dim. 2 Février 2026" />
+      <main className={styles.mainContent}>
+        <PageHeader newCount={unreadCount} onMarkAllRead={() => console.log('Mark all read')} />
 
-        <main className={styles.mainContent}>
-          <PageHeader newCount={unreadCount} onMarkAllRead={() => console.log('Mark all read')} />
+        <div className={styles.notificationsLayout}>
+          <div className={styles.notificationsMain}>
+            <UrgentBanner {...mockData.urgentBanner} onAction={() => console.log('Urgent action')} />
 
-          <div className={styles.notificationsLayout}>
-            <div className={styles.notificationsMain}>
-              <UrgentBanner {...mockData.urgentBanner} onAction={() => console.log('Urgent action')} />
+            <NotificationFilters
+              filters={mockData.filters}
+              activeFilter={activeFilter}
+              onFilterChange={setActiveFilter}
+            />
 
-              <NotificationFilters
-                filters={mockData.filters}
-                activeFilter={activeFilter}
-                onFilterChange={setActiveFilter}
+            {mockData.notificationGroups.map((group, index) => (
+              <NotificationGroup
+                key={index}
+                title={group.title}
+                notifications={group.notifications}
+                onAction={handleNotificationAction}
               />
-
-              {mockData.notificationGroups.map((group, index) => (
-                <NotificationGroup
-                  key={index}
-                  title={group.title}
-                  notifications={group.notifications}
-                  onAction={handleNotificationAction}
-                />
-              ))}
-            </div>
-
-            <div className={styles.notificationsSidebar}>
-              <SummaryWidget stats={mockData.summaryStats} />
-              <PreferencesWidget preferences={preferences} onToggle={handleTogglePreference} />
-              <QuickActionsWidget actions={mockData.quickActions} onAction={handleQuickAction} />
-            </div>
+            ))}
           </div>
-        </main>
-      </div>
-    </div>
+
+          <div className={styles.notificationsSidebar}>
+            <SummaryWidget stats={mockData.summaryStats} />
+            <PreferencesWidget preferences={preferences} onToggle={handleTogglePreference} />
+            <QuickActionsWidget actions={mockData.quickActions} onAction={handleQuickAction} />
+          </div>
+        </div>
+      </main>
+    </>
   );
 };
 
